@@ -1,5 +1,4 @@
-import React from 'react';
-import { bool, element, func, string } from 'prop-types';
+import React from "react";
 
 const Button = ({
   ref,
@@ -18,12 +17,21 @@ const Button = ({
   ...props
 }) => {
   const defaultStyle = {
-    width: width || 'auto',
-    height: height || '2.75rem',
-    color: color || '#030303cc',
-    margin: margin || '1rem auto',
-    boxShadow: shadow && '0px 0px 12px #03030350',
-    background: background || '#0091ff',
+    width: width || "auto",
+    height: height || "2.75rem",
+    color: color || "#030303cc",
+    margin: margin || "1rem auto",
+    background: background || "#0091ff",
+    boxShadow: shadow && "0px 0px 12px #03030350",
+    border: "none",
+    outline: "none",
+    display: "flex",
+    fontWeight: 600,
+    padding: "0.75rem",
+    fontSize: "1.1rem",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 250ms ease",
   };
 
   return (
@@ -32,29 +40,13 @@ const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={className}
-      type={type || 'button'}
+      type={type || "button"}
       style={style || defaultStyle}
       {...props}
     >
       {label}
     </button>
   );
-};
-
-Button.propTypes = {
-  ref: element(Element),
-  type: string,
-  label: string.isRequired,
-  width: string,
-  color: string,
-  style: object,
-  height: string,
-  margin: string,
-  shadow: bool,
-  onClick: func,
-  disabled: bool,
-  className: string,
-  background: string,
 };
 
 export default Button;

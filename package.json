@@ -1,6 +1,6 @@
 {
   "name": "klutch-ui",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "description": "Components for demos",
   "author": "klutch",
   "license": "MIT",
@@ -42,7 +42,6 @@
     "css-loader": "^6.6.0",
     "node-sass": "^7.0.0",
     "postcss": "^8.4.7",
-    "prop-types": "^15.8.1",
     "rollup": "^2.68.0",
     "rollup-plugin-filesize": "^9.1.2",
     "rollup-plugin-postcss": "^4.0.2",
