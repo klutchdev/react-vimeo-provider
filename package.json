@@ -1,12 +1,11 @@
 {
   "name": "klutch-ui",
-  "version": "0.0.6",
-  "description": "Components for demos",
+  "version": "0.0.8",
+  "description": "🚀 Components for React demos",
   "author": "klutch",
   "license": "MIT",
   "main": "build/index.cjs.js",
   "module": "build/index.esm.js",
-  "browser": "build/index.js",
   "files": [
     "build",
     "README.md"
