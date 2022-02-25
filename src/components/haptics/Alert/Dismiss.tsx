@@ -1,5 +1,5 @@
 import React from 'react';
-import '../haptics.scss';
+import '../haptics.css';
 
 export interface DismissButtonProps {
   onClick?: () => void;

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../inputs.scss';
+import '../inputs.css';
 
 // export interface TextInputProps {
 //   onClick?: () => void;

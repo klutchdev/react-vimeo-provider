@@ -1,6 +1,6 @@
 import React from 'react';
 import DismissButton from './Dismiss';
-import '../haptics.scss';
+import '../haptics.css';
 
 export interface AlertProps {
   content: string;

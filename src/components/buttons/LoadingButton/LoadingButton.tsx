@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import '../buttons.scss';
+import '../buttons.css';
 
 export interface LoadingButtonProps {
   type?: 'button' | 'submit' | 'reset' | undefined;
