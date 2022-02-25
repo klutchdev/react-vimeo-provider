@@ -1,18 +1,19 @@
-import babel from "@rollup/plugin-babel";
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import postcss from "rollup-plugin-postcss";
-import filesize from "rollup-plugin-filesize";
-import autoprefixer from "autoprefixer";
+import babel from '@rollup/plugin-babel';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import postcss from 'rollup-plugin-postcss';
+import filesize from 'rollup-plugin-filesize';
+import autoprefixer from 'autoprefixer';
 
-import pkg from "./package.json";
+import pkg from './package.json';
 
-const INPUT_FILE_PATH = "src/index.js";
-const OUTPUT_NAME = "klutch-ui";
+const INPUT_FILE_PATH = 'src/index.js';
+const OUTPUT_NAME = 'klutch-ui';
 
 const GLOBALS = {
-  react: "React",
-  "react-dom": "ReactDOM",
+  react: 'React',
+  'react-dom': 'ReactDOM',
+  'prop-types': 'PropTypes'
 };
 
 const PLUGINS = [
@@ -26,22 +27,21 @@ const PLUGINS = [
   }),
   resolve({
     browser: true,
-    resolveOnly: [/^(?!react$)/, /^(?!react-dom$)/],
+    resolveOnly: [/^(?!react$)/, /^(?!react-dom$)/,/^(?!prop-types$)/],
   }),
   commonjs(),
   filesize(),
 ];
 
-const EXTERNAL = ["react", "react-dom"];
+const EXTERNAL = ['react', 'react-dom', 'prop-types'];
 
-// https://github.com/rollup/plugins/tree/master/packages/babel#babelhelpers
 const CJS_AND_ES_EXTERNALS = EXTERNAL.concat(/@babel\/runtime/);
 
 const OUTPUT_DATA = [
-  // {
-  //   file: pkg.browser,
-  //   format: "umd",
-  // },
+  {
+    file: pkg.browser,
+    format: "umd",
+  },
   {
     file: pkg.main,
     format: "cjs",
