@@ -1,67 +1,43 @@
-import babel from '@rollup/plugin-babel';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import resolve from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 import commonjs from '@rollup/plugin-commonjs';
 import postcss from 'rollup-plugin-postcss';
-import filesize from 'rollup-plugin-filesize';
-import autoprefixer from 'autoprefixer';
+import dts from 'rollup-plugin-dts';
+import { terser } from 'rollup-plugin-terser';
 
-import pkg from './package.json';
+// import packageJson from './package.json';
+const packageJson = require('./package.json');
 
-const INPUT_FILE_PATH = 'src/index.js';
-const OUTPUT_NAME = 'klutch-ui';
-
-const GLOBALS = {
-  react: 'React',
-  'react-dom': 'ReactDOM',
-  'prop-types': 'PropTypes'
-};
-
-const PLUGINS = [
-  postcss({
-    extract: true,
-    plugins: [autoprefixer],
-  }),
-  babel({
-    babelHelpers: "runtime",
-    exclude: "node_modules/**",
-  }),
-  resolve({
-    browser: true,
-    resolveOnly: [/^(?!react$)/, /^(?!react-dom$)/,/^(?!prop-types$)/],
-  }),
-  commonjs(),
-  filesize(),
-];
-
-const EXTERNAL = ['react', 'react-dom', 'prop-types'];
-
-const CJS_AND_ES_EXTERNALS = EXTERNAL.concat(/@babel\/runtime/);
-
-const OUTPUT_DATA = [
+export default [
   {
-    file: pkg.browser,
-    format: "umd",
+    input: 'src/index.ts',
+    output: [
+      {
+        file: packageJson.main,
+        format: 'cjs',
+        sourcemap: true,
+      },
+      {
+        file: packageJson.module,
+        format: 'esm',
+        sourcemap: true,
+      },
+    ],
+    plugins: [
+      peerDepsExternal(),
+      resolve(),
+      commonjs(),
+      typescript({ tsconfig: './tsconfig.json' }),
+      postcss(),
+      terser(),
+    ],
   },
   {
-    file: pkg.main,
-    format: "cjs",
-  },
-  {
-    file: pkg.module,
-    format: "es",
+    input: 'dist/esm/types/index.d.ts',
+    output: [{ file: 'dist/index.d.ts', format: 'esm' }],
+    plugins: [dts()],
+
+    external: [/\.css$/],
   },
 ];
-
-const config = OUTPUT_DATA.map(({ file, format }) => ({
-  input: INPUT_FILE_PATH,
-  output: {
-    file,
-    format,
-    name: OUTPUT_NAME,
-    globals: GLOBALS,
-  },
-  external: ["cjs", "es"].includes(format) ? CJS_AND_ES_EXTERNALS : EXTERNAL,
-  plugins: PLUGINS,
-}));
-
-export default config;
