@@ -2,12 +2,14 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var _defineProperty = require('@babel/runtime/helpers/defineProperty');
+var _extends = require('@babel/runtime/helpers/extends');
+var _objectWithoutProperties = require('@babel/runtime/helpers/objectWithoutProperties');
 var React = require('react');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var _defineProperty__default = /*#__PURE__*/_interopDefaultLegacy(_defineProperty);
+var _extends__default = /*#__PURE__*/_interopDefaultLegacy(_extends);
+var _objectWithoutProperties__default = /*#__PURE__*/_interopDefaultLegacy(_objectWithoutProperties);
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 
 var propTypes = {exports: {}};
@@ -318,6 +320,8 @@ var ReactPropTypesSecret$3 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 var ReactPropTypesSecret_1 = ReactPropTypesSecret$3;
 
+var has$2 = Function.call.bind(Object.prototype.hasOwnProperty);
+
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -330,7 +334,7 @@ var printWarning$1 = function() {};
 if (process.env.NODE_ENV !== 'production') {
   var ReactPropTypesSecret$2 = ReactPropTypesSecret_1;
   var loggedTypeFailures = {};
-  var has$1 = Function.call.bind(Object.prototype.hasOwnProperty);
+  var has$1 = has$2;
 
   printWarning$1 = function(text) {
     var message = 'Warning: ' + text;
@@ -342,7 +346,7 @@ if (process.env.NODE_ENV !== 'production') {
       // This error was thrown as a convenience so that you can use this stack
       // to find the callsite that caused this warning to fire.
       throw new Error(message);
-    } catch (x) {}
+    } catch (x) { /**/ }
   };
 }
 
@@ -371,7 +375,8 @@ function checkPropTypes$1(typeSpecs, values, location, componentName, getStack) 
           if (typeof typeSpecs[typeSpecName] !== 'function') {
             var err = Error(
               (componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' +
-              'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.'
+              'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' +
+              'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.'
             );
             err.name = 'Invariant Violation';
             throw err;
@@ -430,9 +435,9 @@ var ReactIs$1 = reactIs.exports;
 var assign = objectAssign;
 
 var ReactPropTypesSecret$1 = ReactPropTypesSecret_1;
+var has = has$2;
 var checkPropTypes = checkPropTypes_1;
 
-var has = Function.call.bind(Object.prototype.hasOwnProperty);
 var printWarning = function() {};
 
 if (process.env.NODE_ENV !== 'production') {
@@ -533,6 +538,7 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
   // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
   var ReactPropTypes = {
     array: createPrimitiveTypeChecker('array'),
+    bigint: createPrimitiveTypeChecker('bigint'),
     bool: createPrimitiveTypeChecker('boolean'),
     func: createPrimitiveTypeChecker('function'),
     number: createPrimitiveTypeChecker('number'),
@@ -578,8 +584,9 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
    * is prohibitively expensive if they are created too often, such as what
    * happens in oneOfType() for any type before the one that matched.
    */
-  function PropTypeError(message) {
+  function PropTypeError(message, data) {
     this.message = message;
+    this.data = data && typeof data === 'object' ? data: {};
     this.stack = '';
   }
   // Make `instanceof Error` still work for returned errors.
@@ -614,7 +621,7 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
           ) {
             printWarning(
               'You are manually calling a React.PropTypes validation ' +
-              'function for the `' + propFullName + '` prop on `' + componentName  + '`. This is deprecated ' +
+              'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' +
               'and will throw in the standalone `prop-types` package. ' +
               'You may be seeing this warning due to a third-party PropTypes ' +
               'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.'
@@ -653,7 +660,10 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
         // 'of type `object`'.
         var preciseType = getPreciseType(propValue);
 
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+        return new PropTypeError(
+          'Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'),
+          {expectedType: expectedType}
+        );
       }
       return null;
     }
@@ -797,14 +807,19 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
     }
 
     function validate(props, propName, componentName, location, propFullName) {
+      var expectedTypes = [];
       for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
         var checker = arrayOfTypeCheckers[i];
-        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret$1) == null) {
+        var checkerResult = checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret$1);
+        if (checkerResult == null) {
           return null;
         }
+        if (checkerResult.data && has(checkerResult.data, 'expectedType')) {
+          expectedTypes.push(checkerResult.data.expectedType);
+        }
       }
-
-      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+      var expectedTypesMessage = (expectedTypes.length > 0) ? ', expected one of type [' + expectedTypes.join(', ') + ']': '';
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`' + expectedTypesMessage + '.'));
     }
     return createChainableTypeChecker(validate);
   }
@@ -819,6 +834,13 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
     return createChainableTypeChecker(validate);
   }
 
+  function invalidValidatorError(componentName, location, propFullName, key, type) {
+    return new PropTypeError(
+      (componentName || 'React class') + ': ' + location + ' type `' + propFullName + '.' + key + '` is invalid; ' +
+      'it must be a function, usually from the `prop-types` package, but received `' + type + '`.'
+    );
+  }
+
   function createShapeTypeChecker(shapeTypes) {
     function validate(props, propName, componentName, location, propFullName) {
       var propValue = props[propName];
@@ -828,8 +850,8 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
       }
       for (var key in shapeTypes) {
         var checker = shapeTypes[key];
-        if (!checker) {
-          continue;
+        if (typeof checker !== 'function') {
+          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
         }
         var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
         if (error) {
@@ -848,16 +870,18 @@ var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
       if (propType !== 'object') {
         return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
       }
-      // We need to check all keys in case some are required but missing from
-      // props.
+      // We need to check all keys in case some are required but missing from props.
       var allKeys = assign({}, props[propName], shapeTypes);
       for (var key in allKeys) {
         var checker = shapeTypes[key];
+        if (has(shapeTypes, key) && typeof checker !== 'function') {
+          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+        }
         if (!checker) {
           return new PropTypeError(
             'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
             '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
-            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+            '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  ')
           );
         }
         var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
@@ -1042,6 +1066,7 @@ var factoryWithThrowingShims = function() {
   // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
   var ReactPropTypes = {
     array: shim,
+    bigint: shim,
     bool: shim,
     func: shim,
     number: shim,
@@ -1090,204 +1115,183 @@ if (process.env.NODE_ENV !== 'production') {
   propTypes.exports = factoryWithThrowingShims();
 }
 
-var Button = function Button(_ref) {
-  var _ref2;
+var _excluded$2 = ["ref", "type", "label", "width", "color", "style", "height", "margin", "shadow", "onClick", "disabled", "className", "background"];
 
-  var label = _ref.label,
-      onClick = _ref.onClick,
+var Button = function Button(_ref) {
+  var ref = _ref.ref,
+      type = _ref.type,
+      label = _ref.label,
       width = _ref.width,
+      color = _ref.color,
+      style = _ref.style,
       height = _ref.height,
       margin = _ref.margin,
-      background = _ref.background,
-      color = _ref.color,
-      border = _ref.border,
-      radius = _ref.radius,
+      shadow = _ref.shadow,
+      onClick = _ref.onClick,
       disabled = _ref.disabled,
-      icon = _ref.icon,
       className = _ref.className,
-      buttonType = _ref.buttonType;
-  return /*#__PURE__*/React__default["default"].createElement("button", {
+      background = _ref.background,
+      props = _objectWithoutProperties__default["default"](_ref, _excluded$2);
+
+  var defaultStyle = {
+    width: width || 'auto',
+    height: height || '2.75rem',
+    color: color || '#030303cc',
+    margin: margin || '1rem auto',
+    boxShadow: shadow && '0px 0px 12px #03030350',
+    background: background || '#0091ff'
+  };
+  return /*#__PURE__*/React__default["default"].createElement("button", _extends__default["default"]({
+    ref: ref,
     onClick: onClick,
     disabled: disabled,
     className: className,
-    style: (_ref2 = {
-      width: width || "auto",
-      border: border || "none",
-      height: height || "2.75rem",
-      color: color || "#030303cc",
-      margin: margin || "1rem auto",
-      borderRadius: radius || buttonType === "rounded" && "500px" || "4px"
-    }, _defineProperty__default["default"](_ref2, "border", border || "none"), _defineProperty__default["default"](_ref2, "boxShadow", "0px 0px 12px #03030350"), _defineProperty__default["default"](_ref2, "transition", "all 250ms ease"), _defineProperty__default["default"](_ref2, "fontSize", "1.1rem"), _defineProperty__default["default"](_ref2, "fontWeight", 600), _defineProperty__default["default"](_ref2, "padding", "0 1.rem"), _defineProperty__default["default"](_ref2, "display", "flex"), _defineProperty__default["default"](_ref2, "alignItems", "center"), _defineProperty__default["default"](_ref2, "justifyContent", buttonType === "icon" && "space-evenly" || "center"), _defineProperty__default["default"](_ref2, "background", background || buttonType === "text" && "transparent" || "#0091ff"), _ref2)
-  }, buttonType === "icon" && icon, " ", label);
+    type: type || 'button',
+    style: style || defaultStyle
+  }, props), label);
 };
 
 Button.propTypes = {
-  label: propTypes.exports.string,
-  onClick: propTypes.exports.func,
+  ref: propTypes.exports.element(Element),
+  type: propTypes.exports.string,
+  label: propTypes.exports.string.isRequired,
   width: propTypes.exports.string,
+  color: propTypes.exports.string,
+  style: object,
   height: propTypes.exports.string,
   margin: propTypes.exports.string,
-  background: propTypes.exports.string,
-  color: propTypes.exports.string,
-  border: propTypes.exports.string,
-  radius: propTypes.exports.string,
+  shadow: propTypes.exports.bool,
+  onClick: propTypes.exports.func,
   disabled: propTypes.exports.bool,
-  icon: propTypes.exports.element,
   className: propTypes.exports.string,
-  buttonType: propTypes.exports.string
+  background: propTypes.exports.string
 };
 
-var LoadingButton = function LoadingButton(_ref) {
-  var _ref2;
+var _excluded$1 = ["ref", "type", "icon", "label", "width", "color", "style", "height", "margin", "shadow", "onClick", "loading", "disabled", "className", "background"];
 
-  var label = _ref.label,
-      onClick = _ref.onClick,
+var LoadingButton = function LoadingButton(_ref) {
+  var ref = _ref.ref,
+      type = _ref.type;
+      _ref.icon;
+      var label = _ref.label,
       width = _ref.width,
+      color = _ref.color,
+      style = _ref.style,
       height = _ref.height,
       margin = _ref.margin,
-      background = _ref.background,
-      color = _ref.color,
-      border = _ref.border,
-      radius = _ref.radius,
-      disabled = _ref.disabled,
-      loader = _ref.loader,
+      shadow = _ref.shadow,
+      onClick = _ref.onClick,
       loading = _ref.loading,
-      className = _ref.className;
-  return /*#__PURE__*/React__default["default"].createElement("button", {
+      disabled = _ref.disabled,
+      className = _ref.className,
+      background = _ref.background,
+      props = _objectWithoutProperties__default["default"](_ref, _excluded$1);
+
+  var defaultStyle = {
+    minWidth: '6rem',
+    width: width || 'auto',
+    height: height || '2.75rem',
+    color: color || '#030303cc',
+    margin: margin || '1rem auto',
+    boxShadow: shadow && '0px 0px 12px #03030350',
+    background: background || '#0091ff'
+  };
+
+  var Loader = function Loader() {
+    return /*#__PURE__*/React__default["default"].createElement("div", {
+      className: "rotation",
+      style: {
+        margin: 'auto',
+        width: '2.5rem',
+        height: '2.5rem',
+        borderRadius: '50%',
+        border: "5px solid #03030320",
+        borderTop: '5px solid #030303ee'
+      }
+    });
+  };
+
+  return /*#__PURE__*/React__default["default"].createElement("button", _extends__default["default"]({
+    ref: ref,
     onClick: onClick,
     disabled: disabled,
     className: className,
-    style: (_ref2 = {
-      width: width || "25%",
-      border: border || "none",
-      height: height || "2.75rem",
-      color: color || "#030303cc",
-      margin: margin || "1rem auto",
-      borderRadius: radius || "4px"
-    }, _defineProperty__default["default"](_ref2, "border", border || "none"), _defineProperty__default["default"](_ref2, "boxShadow", "0px 0px 12px #03030350"), _defineProperty__default["default"](_ref2, "transition", "all 250ms ease"), _defineProperty__default["default"](_ref2, "fontSize", "1.1rem"), _defineProperty__default["default"](_ref2, "fontWeight", 600), _defineProperty__default["default"](_ref2, "padding", "0 1.rem"), _defineProperty__default["default"](_ref2, "display", "flex"), _defineProperty__default["default"](_ref2, "alignItems", "center"), _defineProperty__default["default"](_ref2, "justifyContent", "center"), _defineProperty__default["default"](_ref2, "background", background || "#0091ff"), _ref2)
-  }, loading ? loader : label);
+    type: type || 'button',
+    style: style || defaultStyle
+  }, props), loading ? /*#__PURE__*/React__default["default"].createElement(Loader, null) : label);
 };
 
 LoadingButton.propTypes = {
-  label: propTypes.exports.string,
-  onClick: propTypes.exports.func,
+  ref: propTypes.exports.element(Element),
+  type: propTypes.exports.string,
+  label: propTypes.exports.string.isRequired,
   width: propTypes.exports.string,
+  color: propTypes.exports.string,
+  style: propTypes.exports.object,
   height: propTypes.exports.string,
   margin: propTypes.exports.string,
-  background: propTypes.exports.string,
-  color: propTypes.exports.string,
-  border: propTypes.exports.string,
-  radius: propTypes.exports.string,
+  shadow: propTypes.exports.bool,
+  onClick: propTypes.exports.func,
+  loading: propTypes.exports.bool.isRequired,
   disabled: propTypes.exports.bool,
-  loader: propTypes.exports.element,
-  loading: propTypes.exports.bool,
-  className: propTypes.exports.string
+  className: propTypes.exports.string,
+  background: propTypes.exports.string
 };
 
-var TextInput = function TextInput(_ref) {
-  var value = _ref.value,
-      onChange = _ref.onChange,
-      leftIcon = _ref.leftIcon,
-      rightIcon = _ref.rightIcon,
-      placeholder = _ref.placeholder,
-      color = _ref.color,
-      bgColor = _ref.bgColor,
-      border = _ref.border,
-      radius = _ref.radius,
-      leftIconColor = _ref.leftIconColor,
-      rightIconColor = _ref.rightIconColor,
-      disabled = _ref.disabled,
-      className = _ref.className,
+var _excluded = ["ref", "type", "icon", "label", "width", "color", "style", "height", "margin", "shadow", "onClick", "disabled", "className", "background"];
+
+var IconButton = function IconButton(_ref) {
+  var ref = _ref.ref,
+      type = _ref.type,
+      icon = _ref.icon,
+      label = _ref.label,
       width = _ref.width,
+      color = _ref.color,
+      style = _ref.style,
       height = _ref.height,
       margin = _ref.margin,
-      padding = _ref.padding,
-      autoComplete = _ref.autoComplete;
-  return /*#__PURE__*/React__default["default"].createElement("div", {
+      shadow = _ref.shadow,
+      onClick = _ref.onClick,
+      disabled = _ref.disabled,
+      className = _ref.className,
+      background = _ref.background,
+      props = _objectWithoutProperties__default["default"](_ref, _excluded);
+
+  var defaultStyle = {
+    width: width || 'auto',
+    height: height || '2.75rem',
+    color: color || '#030303cc',
+    margin: margin || '1rem auto',
+    boxShadow: shadow && '0px 0px 12px #03030350',
+    background: background || '#0091ff'
+  };
+  return /*#__PURE__*/React__default["default"].createElement("button", _extends__default["default"]({
+    ref: ref,
+    onClick: onClick,
     disabled: disabled,
     className: className,
-    style: {
-      width: width || "100%",
-      height: height || "2.75rem",
-      margin: margin || "0.25rem 0 1rem 0",
-      padding: padding || "0 0.5rem",
-      outline: "none",
-      background: bgColor || "#03030350",
-      border: border || "2px solid #424a4f",
-      borderRadius: radius || "4px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-evenly",
-      transition: "all 300ms ease",
-      boxShadow: "0px 0px 12px #03030350"
-    }
-  }, leftIcon && /*#__PURE__*/React__default["default"].createElement("div", {
-    style: {
-      margin: "0 auto 0 0",
-      width: "3rem",
-      height: "100%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: leftIconColor || "#3e4244",
-      transition: "all 300ms ease"
-    }
-  }, leftIcon), /*#__PURE__*/React__default["default"].createElement("input", {
-    type: "text",
-    value: value,
-    onChange: onChange,
-    placeholder: placeholder,
-    autoComplete: autoComplete || "off",
-    style: {
-      width: "100%",
-      height: "100%",
-      outline: "none",
-      border: "none",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      color: color || "#cccccc",
-      background: "transparent",
-      fontSize: "1.25rem",
-      fontFamily: "Montserrat",
-      letterSpacing: 0,
-      fontWeight: 600
-    }
-  }), rightIcon && /*#__PURE__*/React__default["default"].createElement("div", {
-    style: {
-      margin: "auto 0 auto auto",
-      width: "3rem",
-      height: "100%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      color: rightIconColor || "#424a4f",
-      transition: "all 300ms ease"
-    }
-  }, rightIcon));
+    type: type || 'button',
+    style: style || defaultStyle
+  }, props), icon, " ", label);
 };
 
-TextInput.propTypes = {
-  value: propTypes.exports.string,
-  onChange: propTypes.exports.func,
-  leftIcon: propTypes.exports.element,
-  rightIcon: propTypes.exports.element,
-  placeholder: propTypes.exports.string,
-  color: propTypes.exports.string,
-  bgColor: propTypes.exports.string,
-  border: propTypes.exports.string,
-  radius: propTypes.exports.string,
-  leftIconColor: propTypes.exports.string,
-  rightIconColor: propTypes.exports.string,
+IconButton.propTypes = {
+  ref: propTypes.exports.element(HTMLElement),
+  type: propTypes.exports.string,
+  icon: propTypes.exports.element.isRequired,
+  label: propTypes.exports.string,
   width: propTypes.exports.string,
+  color: propTypes.exports.string,
+  style: propTypes.exports.object,
   height: propTypes.exports.string,
   margin: propTypes.exports.string,
-  padding: propTypes.exports.string,
-  autoComplete: propTypes.exports.string,
+  shadow: propTypes.exports.bool,
+  onClick: propTypes.exports.func,
+  disabled: propTypes.exports.bool,
   className: propTypes.exports.string,
-  disabled: propTypes.exports.bool
+  background: propTypes.exports.string
 };
 
 exports.Button = Button;
+exports.IconButton = IconButton;
 exports.LoadingButton = LoadingButton;
-exports.TextInput = TextInput;

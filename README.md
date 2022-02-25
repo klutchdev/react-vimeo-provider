@@ -25,7 +25,7 @@ import { Button,  IconButton, LoadingButton } from "klutch-ui";
 
 ### Props && types
 
-```js
+```jsx
 propTypes = {
   ref: element(Element),
   type: string,

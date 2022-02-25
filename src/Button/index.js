@@ -1,5 +1,5 @@
 import React from 'react';
-import { bool, element, func, string, element } from 'prop-types';
+import { bool, element, func, string } from 'prop-types';
 
 const Button = ({
   ref,
