@@ -2,7 +2,7 @@ import React from 'react';
 import { bool, element, func, string, object } from 'prop-types';
 import './index.css';
 
-const LoadingButton = ({
+const IconButton = ({
   ref,
   type,
   icon,
@@ -14,14 +14,12 @@ const LoadingButton = ({
   margin,
   shadow,
   onClick,
-  loading,
   disabled,
   className,
   background,
   ...props
 }) => {
   const defaultStyle = {
-    minWidth: '6rem',
     width: width || 'auto',
     height: height || '2.75rem',
     color: color || '#030303cc',
@@ -29,20 +27,6 @@ const LoadingButton = ({
     boxShadow: shadow && '0px 0px 12px #03030350',
     background: background || '#0091ff',
   };
-
-  const Loader = () => (
-    <div
-      className="rotation"
-      style={{
-        margin: 'auto',
-        width: '2.5rem',
-        height: '2.5rem',
-        borderRadius: '50%',
-        border: `5px solid #03030320`,
-        borderTop: '5px solid #030303ee',
-      }}
-    />
-  );
 
   return (
     <button
@@ -54,15 +38,16 @@ const LoadingButton = ({
       style={style || defaultStyle}
       {...props}
     >
-      {loading ? <Loader /> : label}
+      {icon} {label}
     </button>
   );
 };
 
-LoadingButton.propTypes = {
-  ref: element(Element),
+IconButton.propTypes = {
+  ref: element(HTMLElement),
   type: string,
-  label: string.isRequired,
+  icon: element.isRequired,
+  label: string,
   width: string,
   color: string,
   style: object,
@@ -70,10 +55,9 @@ LoadingButton.propTypes = {
   margin: string,
   shadow: bool,
   onClick: func,
-  loading: bool.isRequired,
   disabled: bool,
   className: string,
   background: string,
 };
 
-export default LoadingButton;
+export default IconButton;

@@ -1,5 +1,5 @@
-import Button from "./Button";
-import LoadingButton from "./LoadingButton";
-import TextInput from "./TextInput";
+import Button from './Button';
+import LoadingButton from './LoadingButton';
+import IconButton from './IconButton';
 
-export { Button, LoadingButton, TextInput };
+export { Button, LoadingButton, IconButton };
