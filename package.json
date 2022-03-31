@@ -1,13 +1,14 @@
 {
   "name": "react-vimeo-provider",
   "author": "klutch",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "license": "MIT",
   "description": "🚀 Components for React demos",
   "scripts": {
     "clean": "rm -rf dist node_modules package-lock.json && npm i",
     "build": "rollup -c && npx typedoc",
+    "publish": "npm run build && npm publish",
     "typedoc": "npx typedoc",
     "test": "jest"
   },

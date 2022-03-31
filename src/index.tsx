@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Player, { CallbackFunction, EventCallback, Options } from '@vimeo/player';
 
-function ReactVimeoProvider({
+function VimeoProvider({
   ref,
   title,
   videoId,
@@ -63,7 +63,7 @@ function ReactVimeoProvider({
   );
 }
 
-export { ReactVimeoProvider };
+export { VimeoProvider };
 
 // function notifyMe() {
 //   let notification;
