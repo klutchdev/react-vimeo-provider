@@ -1,5 +1,6 @@
 ## React Vimeo Provider
 
+[Open docs →](https://react-vimeo-provider.netlify.app)
 
 ### Install via npm
 ```sh
