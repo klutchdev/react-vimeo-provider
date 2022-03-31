@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import Player, { CallbackFunction, EventCallback, Options } from '@vimeo/player';
 
-export default function ReactVimeoProvider({
+export function ReactVimeoProvider({
   ref,
   title,
   videoId,
