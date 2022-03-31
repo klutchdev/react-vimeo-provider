@@ -30,7 +30,7 @@ export function ReactVimeoProvider({
   onGetTitle?: CallbackFunction | any;
   options?: Options;
   props?: any;
-}): JSX.IntrinsicElements['iframe'] {
+}) {
   const vimeoRef = useRef(null);
   const id = videoId.toString();
 
