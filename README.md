@@ -10,7 +10,7 @@ npm i react-vimeo-provider
 ### Import
 
 ```jsx
-import VimeoProvider from "react-vimeo-provider";
+import {VimeoProvider} from "react-vimeo-provider";
 ```
 
 ### Use
