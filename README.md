@@ -1,46 +1,39 @@
-## Fireship components
+## React Vimeo Provider
 
 
 ### Install via npm
 ```sh
-npm i klutch-ui
+npm i react-vimeo-provider
 ```
 
 ### Import
 
 ```jsx
-import { Button,  IconButton, LoadingButton } from "klutch-ui";
+import VimeoProvider from "react-vimeo-provider";
 ```
 
 ### Use
 
 ```jsx
-<Button label="Hello" onClick={doSomething} {...props}/>
-
-<LoadingButton label="Upload" loading={isLoading} onClick={uploadData} />
-
-<IconButton label="Next Episode" icon={<PlayIcon />} onClick={playNext} />
-
+<VimeoProvider 
+  videoId="12345678" 
+  onEnded={doSomething} 
+  ref={ref}
+  title="Some Title"
+  videoId="123412341234"
+  allowFullScreen={true}
+  height="1200px"
+  width="900px"
+  onPlay={callback}
+  onProgress={callback}
+  onEnded={callback}
+  onError={callback}
+  onGetTitle={callback}
+  options={vimeoOptions}
+{...props}
+/>
 ```
 
 ### Props && types
 
-```jsx
-propTypes = {
-  ref: element(Element),
-  type: string,
-  label: string.isRequired,
-  icon: element.isRequired, // IconButton only
-  width: string,
-  color: string,
-  style: object,
-  height: string,
-  margin: string,
-  shadow: bool,
-  onClick: func,
-  loading: bool.isRequired, // LoadingButton only
-  disabled: bool,
-  className: string,
-  background: string,
-};
-```
+Todo

@@ -1,7 +1,7 @@
 {
-  "name": "klutch-ui",
+  "name": "react-vimeo-provider",
   "author": "klutch",
-  "version": "0.1.1",
+  "version": "0.0.1",
   "private": false,
   "license": "MIT",
   "description": "🚀 Components for React demos",
@@ -11,43 +11,47 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
+    "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
-    "@rollup/plugin-commonjs": "^21.0.1",
-    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-commonjs": "^21.0.3",
+    "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-typescript": "^8.3.1",
-    "@testing-library/react": "^12.1.3",
+    "@testing-library/react": "^12.1.4",
     "@types/jest": "^27.4.1",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.11",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
+    "@types/vimeo__player": "^2.16.2",
+    "@vimeo/player": "^2.16.4",
     "babel-jest": "^27.5.1",
-    "babel-loader": "^8.2.3",
-    "css-loader": "^6.5.1",
+    "babel-loader": "^8.2.4",
+    "css-loader": "^6.7.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
-    "node-sass": "^6.0.1",
-    "postcss": "^8.3.11",
-    "prettier": "^2.5.1",
-    "rollup": "^2.59.0",
-    "rollup-plugin-dts": "^4.1.0",
+    "postcss": "^8.4.12",
+    "prettier": "^2.6.1",
+    "rollup": "^2.70.1",
+    "rollup-plugin-dts": "^4.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.1",
+    "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.43.4",
-    "sass-loader": "^12.3.0",
+    "sass": "^1.49.9",
+    "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
-    "typescript": "^4.5.5"
+    "typescript": "^4.6.3"
   },
   "types": "dist/index.d.ts",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "typedoc": "^0.22.13"
+  }
 }

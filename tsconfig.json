@@ -25,8 +25,15 @@
   "include": [
     "src"
   ],
+  "typedocOptions": {
+    "entryPoints": [
+      "src"
+    ],
+    "out": "docs"
+  },
   "exclude": [
     "node_modules",
-    "lib"
+    "dist",
+    "docs"
   ]
 }
