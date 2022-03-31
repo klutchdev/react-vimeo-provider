@@ -63,7 +63,7 @@ function ReactVimeoProvider({
   );
 }
 
-export { ReactVimeoProvider as default };
+export { ReactVimeoProvider };
 
 // function notifyMe() {
 //   let notification;
