@@ -1,19 +1,19 @@
 {
   "name": "react-vimeo-provider",
   "author": "klutch",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": false,
   "license": "MIT",
   "description": "🚀 Components for React demos",
   "scripts": {
     "clean": "rm -rf dist node_modules package-lock.json && npm i",
-    "build": "rollup -c",
+    "build": "rollup -c && npx typedoc",
     "typedoc": "npx typedoc",
     "test": "jest"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": ">=17.0.3",
+    "react-dom": ">=17.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
@@ -44,7 +44,8 @@
     "sass": "^1.49.9",
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "typedoc": "^0.22.13"
   },
   "types": "dist/index.d.ts",
   "main": "dist/cjs/index.js",
@@ -52,7 +53,5 @@
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "typedoc": "^0.22.13"
-  }
+  "dependencies": {}
 }
